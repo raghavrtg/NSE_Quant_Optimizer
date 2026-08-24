@@ -60,6 +60,9 @@ def render_correlation_tab(
         corr_disp = stats.corr.copy()
         corr_disp.index = [i.replace(".NS", "") for i in corr_disp.index]
         corr_disp.columns = [c.replace(".NS", "") for c in corr_disp.columns]
-        st.dataframe(corr_disp.style.format("{:.3f}").background_gradient(cmap="Greys"), use_container_width=True)
+       try:
+    st.dataframe(corr_disp.style.format("{:.3f}").background_gradient(cmap="Greys"), use_container_width=True)
+except Exception:
+    st.dataframe(corr_disp.round(3), use_container_width=True)
     else:
         st.info("Manual weights from Tab 1 unlock concentration diagnostics.")
