@@ -8,15 +8,22 @@ import plotly.express as px
 import streamlit as st
 
 
-def render_correlation_tab(stats: dict, portfolio_ctx: dict) -> None:
+def render_correlation_tab(stats, portfolio_ctx: dict) -> None:
     st.markdown("### Asset Correlation & Concentration Dynamics")
     st.markdown(
         "Low or negative cross-asset correlation is the mathematical foundation of diversification. "
         "High correlation clusters indicate concentration risk."
     )
 
-    corr_df: pd.DataFrame = stats.get("correlation_matrix")
-    if corr_df is None or corr_df.empty:
+    # Safely retrieve correlation matrix whether stats is an object or dictionary
+    if hasattr(stats, "correlation_matrix"):
+        corr_df = stats.correlation_matrix
+    elif isinstance(stats, dict):
+        corr_df = stats.get("correlation_matrix")
+    else:
+        corr_df = None
+
+    if corr_df is None or (isinstance(corr_df, pd.DataFrame) and corr_df.empty):
         st.info("Insufficient return history to compute correlation matrix.")
         return
 
